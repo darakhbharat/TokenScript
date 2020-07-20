@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:asnx="urn:ietf:params:xml:ns:asnx"
+		targetNamespace="urn:ietf:params:xml:ns:asnx"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+	<xs:import schemaLocation="asnx.xsd"/>
+	
+    <xs:element name="module">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="namedType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="namedObjectSet" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="namedClass" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:NCName"/>
+			<xs:attribute name="tagDefault" type="xs:NCName" default="explicit"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

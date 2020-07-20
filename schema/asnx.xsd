@@ -1,72 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:ethereum="urn:ethereum:constantinople"
-        xmlns:asnx="urn:ietf:params:xml:ns:asnx"
-        targetNamespace="urn:ietf:params:xml:ns:asnx"
-        elementFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <import namespace="urn:ethereum:constantinople"
-            schemaLocation="ethereum.xsd"/>
+	<!--xs:import namespace="urn:ietf:params:xml:ns:asnx" schemaLocation="asnx-module.xsd"/-->	
+    <!--xs:import namespace="urn:ethereum:constantinople" schemaLocation="ethereum.xsd"/-->
 
-    <element name="module">
-        <complexType>
-            <sequence>
-                <element name="namedType" maxOccurs="unbounded" type="asnx:namedType"/>
-            </sequence>
-            <attribute name="name" type="NCName"/>
-        </complexType>
-    </element>
+	 
+	<xs:element name="namedType" type="namedTypeType"/>
+	<xs:element name="namedObjectSet" type="namedObjectSetType"/>
+	<xs:element name="namedClass" type="namedClassType"/>
+	
+    <xs:complexType name="namedTypeType">
+		<xs:sequence>
+			<xs:element name="type" type="typeType" minOccurs="1" maxOccurs="1"/>     
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:NCName"/>
+    </xs:complexType>
+	<xs:complexType name="namedObjectSetType">
+		<xs:sequence>
+			<xs:element name="objectSet" type="objectSetType" minOccurs="1" maxOccurs="1"/>     
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:NCName"/>
+		<xs:attribute name="class" type="xs:NCName"/>
+    </xs:complexType>
+	<xs:complexType name="namedClassType">
+		<xs:sequence>
+			<xs:element name="class" type="classType" minOccurs="1" maxOccurs="1"/>     
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:NCName"/>
+    </xs:complexType>
 
-    <complexType name="namedType">
-        <choice>
-            <element name="element" type="asnx:element"/>
-            <element name="type" type="asnx:type">
-            </element>
-        </choice>
-        <attribute name="name" type="NCName"/>
-    </complexType>
+    <xs:complexType name="typeType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="choice" type="choiceType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="sequenceOf" type="sequenceOfType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="setOf" type="setOfType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="sequence" type="sequenceType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="constrained" type="constrainedType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="fromClass" type="fromClassType" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+    </xs:complexType>
 
-    <complexType name="type">
-        <choice>
-            <element name="sequence" type="asnx:container"/>
-            <element name="enumerated" type="asnx:enumerated"/>
-        </choice>
-    </complexType>
-
-    <complexType name="enumerated">
-        <sequence>
-            <element name="enumeration" maxOccurs="unbounded">
-                <complexType>
-                    <attribute name="name" type="NCName"/>
-                    <attribute name="number" type="integer"/>
-                </complexType>
-            </element>
-        </sequence>
-    </complexType>
-
-    <complexType name="container">
-        <choice maxOccurs="unbounded">
-            <element name="element" type="asnx:element"/>
-        </choice>
-    </complexType>
-
-    <complexType name="element">
-        <sequence>
-            <element minOccurs="0" name="type" type="asnx:type"/>
-        </sequence>
-        <attribute name="name" type="NCName"/>
-        <attribute name="type">
-            <simpleType>
-                <restriction base="string">
-                    <enumeration value="asnx:UTF8String"/>
-                    <enumeration value="asnx:INTEGER"/>
-                    <enumeration value="asnx:BOOLEAN"/>
-                    <enumeration value="asnx:OCTET-STRING"/>
-                    <enumeration value="asnx:UTCTime"/>
-                </restriction>
-            </simpleType>
-        </attribute>
-        <attribute ref="ethereum:type"/>
-        <attribute ref="ethereum:indexed"/>
-    </complexType>
-</schema>
+    <xs:complexType name="choiceType">
+		<xs:sequence>
+			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="sequenceOfType">
+		<xs:sequence>
+			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="setOfType">
+		<xs:sequence>
+			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="minSize" type="xs:integer" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="sequenceType">
+		<xs:sequence>
+			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="constrainedType">
+		<xs:sequence>
+			<xs:element name="type" type="typeType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="table" type="tableType" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="fromClassType">
+		<xs:attribute name="class" type="xs:NCName" use="required"/>
+		<xs:attribute name="fieldName" type="xs:NCName" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="tableType">
+		<xs:sequence>
+			<xs:element name="restrictBy" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="objectSet" type="xs:NCName" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="objectSetType">
+		<xs:sequence>
+			<xs:element name="extension" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="classType">
+		<xs:sequence>
+			<xs:element name="typeField" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:NCName" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="valueField" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:NCName" use="required"/>
+					<!-- Note: type here is xs:string in order to allow the : in the attribute value. -->
+					<xs:attribute name="type" type="xs:string" use="required"/>
+					<xs:attribute name="unique" type="xs:NCName" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="elementType">
+		<xs:sequence>
+			<xs:element name="type" type="typeType" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:NCName" use="required"/>
+		<!-- FIXME: get the restrictions from old XSD -->
+		<xs:attribute name="type" type="xs:NCName" use="optional"/>
+		<!-- Note: @identifier allows empty values hence declared as string -->
+		<xs:attribute name="identifier" type="xs:string" use="optional"/>
+	</xs:complexType>
+</xs:schema>
