@@ -24,9 +24,10 @@
     </xs:complexType>
 	<xs:complexType name="namedClassType">
 		<xs:sequence>
-			<xs:element name="class" type="classType" minOccurs="1" maxOccurs="1"/>     
+			<xs:element name="class" type="classType" minOccurs="0" maxOccurs="1"/>     
 		</xs:sequence>
-		<xs:attribute name="name" type="xs:NCName"/>
+		<xs:attribute name="name" type="xs:NCName" use="required"/>
+		<xs:attribute name="class" type="xs:NCName" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="typeType">
@@ -38,6 +39,7 @@
 				<xs:element name="sequence" type="sequenceType" minOccurs="0" maxOccurs="1"/>
 				<xs:element name="constrained" type="constrainedType" minOccurs="0" maxOccurs="1"/>
 				<xs:element name="fromClass" type="fromClassType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="namedNumberList" type="namedNumberListType" minOccurs="0" maxOccurs="1"/>
 			</xs:choice>
 		</xs:sequence>
     </xs:complexType>
@@ -61,6 +63,7 @@
 	<xs:complexType name="sequenceType">
 		<xs:sequence>
 			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:element name="optional" type="optionalType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 	
@@ -86,6 +89,16 @@
 			<xs:element name="extension" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="namedNumberListType">
+		<xs:sequence>
+			<xs:element name="namedNumber" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:NCName" use="required"/>
+					<xs:attribute name="number" type="xs:integer" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	
 	<xs:complexType name="classType">
 		<xs:sequence>
@@ -106,6 +119,16 @@
 	</xs:complexType>
 	
 	
+	<xs:complexType name="optionalType">
+		<xs:sequence>
+			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:element name="default" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:attribute name="literalValue" type="xs:NCName" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="elementType">
 		<xs:sequence>
 			<xs:element name="type" type="typeType" minOccurs="0" maxOccurs="1"/>
