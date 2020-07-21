@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<!--xs:import namespace="urn:ietf:params:xml:ns:asnx" schemaLocation="asnx-module.xsd"/-->	
     <!--xs:import namespace="urn:ethereum:constantinople" schemaLocation="ethereum.xsd"/-->
-
 	 
+	<xs:element name="import" type="importType"/>
 	<xs:element name="namedType" type="namedTypeType"/>
 	<xs:element name="namedObjectSet" type="namedObjectSetType"/>
 	<xs:element name="namedClass" type="namedClassType"/>
 	
-    <xs:complexType name="namedTypeType">
+    <xs:complexType name="importType">
+		<xs:attribute name="name" type="xs:NCName" use="required"/>
+		<xs:attribute name="schemaLocation" type="xs:NCName" use="required"/>
+    </xs:complexType>
+	<xs:complexType name="namedTypeType">
 		<xs:sequence>
-			<xs:element name="type" type="typeType" minOccurs="1" maxOccurs="1"/>     
+			<xs:element name="type" type="typeType" minOccurs="0" maxOccurs="1"/>     
 		</xs:sequence>
-		<xs:attribute name="name" type="xs:NCName"/>
+		<xs:attribute name="name" type="xs:NCName" use="required"/>
+		<xs:attribute name="type" type="xs:string" use="optional"/>
     </xs:complexType>
 	<xs:complexType name="namedObjectSetType">
 		<xs:sequence>
@@ -40,6 +44,7 @@
 				<xs:element name="constrained" type="constrainedType" minOccurs="0" maxOccurs="1"/>
 				<xs:element name="fromClass" type="fromClassType" minOccurs="0" maxOccurs="1"/>
 				<xs:element name="namedNumberList" type="namedNumberListType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="tagged" type="taggedType" minOccurs="0" maxOccurs="1"/>
 			</xs:choice>
 		</xs:sequence>
     </xs:complexType>
@@ -99,6 +104,14 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="taggedType">
+		<xs:sequence>
+			<xs:element name="type" type="typeType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="number" type="xs:integer" use="optional"/>
+		<xs:attribute name="tagging" type="xs:NCName" use="optional"/>
+		<xs:attribute name="type" type="xs:NCName" use="optional"/>
+	</xs:complexType>
 	
 	<xs:complexType name="classType">
 		<xs:sequence>
@@ -107,21 +120,24 @@
 					<xs:attribute name="name" type="xs:NCName" use="required"/>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="valueField" minOccurs="1" maxOccurs="1">
-				<xs:complexType>
-					<xs:attribute name="name" type="xs:NCName" use="required"/>
-					<!-- Note: type here is xs:string in order to allow the : in the attribute value. -->
-					<xs:attribute name="type" type="xs:string" use="required"/>
-					<xs:attribute name="unique" type="xs:NCName" use="optional"/>
-				</xs:complexType>
-			</xs:element>
+			<xs:element name="valueField" type="valueFieldType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="optional" type="optionalType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 	
 	
+	<xs:complexType name="valueFieldType">
+		<xs:attribute name="name" type="xs:NCName" use="required"/>
+		<!-- Note: type here is xs:string in order to allow the : in the attribute value. -->
+		<xs:attribute name="type" type="xs:string" use="required"/>
+		<xs:attribute name="unique" type="xs:NCName" use="optional"/>
+	</xs:complexType>
 	<xs:complexType name="optionalType">
 		<xs:sequence>
-			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:choice>
+				<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="valueField" type="valueFieldType" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
 			<xs:element name="default" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:attribute name="literalValue" type="xs:NCName" use="required"/>

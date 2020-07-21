@@ -9,6 +9,7 @@
     <xs:element name="module">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element ref="import" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element ref="namedType" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element ref="namedObjectSet" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element ref="namedClass" minOccurs="0" maxOccurs="unbounded"/>
