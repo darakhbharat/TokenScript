@@ -66,10 +66,10 @@
 		<xs:attribute name="minSize" type="xs:integer" use="optional"/>
 	</xs:complexType>
 	<xs:complexType name="sequenceType">
-		<xs:sequence>
-			<xs:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
-			<xs:element name="optional" type="optionalType" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="element" type="elementType"/>
+			<xs:element name="optional" type="optionalType"/>
+		</xs:choice>
 	</xs:complexType>
 	
 	<xs:complexType name="constrainedType">
@@ -105,9 +105,10 @@
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="taggedType">
-		<xs:sequence>
+		<!-- Note: probably we will not need this nested type element here -->
+		<!--xs:sequence>
 			<xs:element name="type" type="typeType" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
+		</xs:sequence-->
 		<xs:attribute name="number" type="xs:integer" use="optional"/>
 		<xs:attribute name="tagging" type="xs:NCName" use="optional"/>
 		<xs:attribute name="type" type="xs:NCName" use="optional"/>
@@ -115,12 +116,14 @@
 	
 	<xs:complexType name="classType">
 		<xs:sequence>
-			<xs:element name="typeField" minOccurs="1" maxOccurs="1">
-				<xs:complexType>
-					<xs:attribute name="name" type="xs:NCName" use="required"/>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="valueField" type="valueFieldType" minOccurs="1" maxOccurs="1"/>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="typeField" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:attribute name="name" type="xs:NCName" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="valueField" type="valueFieldType" minOccurs="1" maxOccurs="1"/>
+			</xs:choice>	
 			<xs:element name="optional" type="optionalType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -151,7 +154,7 @@
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:NCName" use="required"/>
 		<!-- FIXME: get the restrictions from old XSD -->
-		<xs:attribute name="type" type="xs:NCName" use="optional"/>
+		<xs:attribute name="type" type="xs:string" use="optional"/>
 		<!-- Note: @identifier allows empty values hence declared as string -->
 		<xs:attribute name="identifier" type="xs:string" use="optional"/>
 	</xs:complexType>
