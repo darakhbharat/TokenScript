@@ -123,8 +123,8 @@
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="valueField" type="valueFieldType" minOccurs="1" maxOccurs="1"/>
-			</xs:choice>	
-			<xs:element name="optional" type="optionalType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="optional" type="optionalType" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
 	
@@ -150,6 +150,7 @@
 	</xs:complexType>
 	<xs:complexType name="elementType">
 		<xs:sequence>
+			<xs:element name="annotation" type="xs:NCName" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="type" type="typeType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:NCName" use="required"/>

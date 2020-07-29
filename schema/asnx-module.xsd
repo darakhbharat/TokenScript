@@ -10,9 +10,11 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="import" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="namedType" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="namedObjectSet" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="namedClass" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element ref="namedType" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="namedObjectSet" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="namedClass" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:choice>	
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:NCName"/>
 			<xs:attribute name="tagDefault" type="xs:NCName" default="explicit"/>
