@@ -69,6 +69,15 @@
             <selector xpath="ts:attribute"></selector>
             <field xpath="@name"></field>
         </key>
+		<!-- keyrefs for contract element -->
+		<keyref name="contractRef" refer="ts:contractName">
+            <selector xpath=".//ts:origins/ts:ethereum | .//ts:origins/ethereum:call | .//ts:origins/ethereum:event | .//ts:transaction/ethereum:transaction"></selector>
+            <field xpath="@contract"></field>
+        </keyref>
+        <key name="contractName">
+            <selector xpath="ts:contract"></selector>
+            <field xpath="@name"></field>
+        </key>
     </element>
     <element name="cards">
         <complexType>
