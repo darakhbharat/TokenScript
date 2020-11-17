@@ -1,8 +1,6 @@
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -25,14 +23,14 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.xerces.util.XMLCatalogResolver;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 
@@ -40,16 +38,21 @@ public class XMLValidator {
 	private static final String W3C_XML_SCHEMA_11_NS_URI = "http://www.w3.org/XML/XMLSchema/v1.1";
 	private static final String XML_VALIDATION = "-val";
 	private static final String ENTITY_DEREFERENCE = "-deref";
-	private static boolean actionValidate = true;
+	private static final String SCHEMA_URL = "http://tokenscript.org/2020/06/tokenscript.xsd";
+	private static boolean actionValidate = false;
 	private static boolean actionEntityDeRef = false;
+	private static int errorCount = 0;
 	
 	private static void validateFile(File xmlFile, File xsdFile) throws SAXException, IOException {
 	    // 1. Lookup a factory for the W3C XML Schema language
 	    //SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_11_NS_URI);
 	    // 2. Compile the schema.
-	    File schemaLocation = xsdFile; 
-	    Schema schema = factory.newSchema(schemaLocation);
+		Schema schema = null;
+	    if(xsdFile == null)
+	    	schema = factory.newSchema(new URL(SCHEMA_URL));
+	    else
+	    	schema = factory.newSchema(xsdFile);
  
 	    // 3. Get a validator from the schema.
 	    Validator validator = schema.newValidator();
@@ -72,53 +75,12 @@ public class XMLValidator {
 			if (file.isDirectory())
 				findXMLFileAndValidate(file, xsdFile);
 			String filename = file.getName();
-			if (file.isFile() && filename.endsWith(".xml") && xsdFile != null && xsdFile.exists()) {
+			if (file.isFile() && filename.endsWith(".xml")) {
 				validateFile(file, xsdFile);
-			} else {
-				validateUsingschemaLocation(file);
 			}
 		}
 	}
 	
-	private static void validateUsingschemaLocation(File file) {
-	    try {
-	      
-	    	
-	    	String [] catalogs =  
-	    		  {file.getAbsolutePath()};
-	    	// Create catalog resolver and set a catalog list.
-	    	XMLCatalogResolver resolver = new XMLCatalogResolver();
-	    	resolver.setPreferPublic(true);
-	    	resolver.setCatalogList(catalogs);
-
-	    	
-	    	
-	      String parserClass = "org.apache.xerces.parsers.SAXParser";
-	      String schemaFeature = "http://apache.org/xml/features/validation/schema";
-
-	      // getting Xerces SAX parser as an XMLReader
-	      XMLReader parser
-	         = XMLReaderFactory.createXMLReader(parserClass);
-
-	      // setting the parser for XML schema validation
-	      parser.setFeature(schemaFeature,true);
-	      
-	      // Set the resolver on the parser.
-	      parser.setProperty("http://apache.org/xml/properties/internal/entity-resolver", resolver);
-	      //parser.setErrorHandler(new MyErrorHandler());
-	      InputStream in = new FileInputStream(file);
-	      InputSource inputSource = new InputSource(new InputStreamReader(in));
-	      System.out.println();
-	      System.out.println("Parsing and validating: "+file.getName());
-	      parser.parse(inputSource);
-	      System.out.println();
-	      
-	    } catch (Exception e) {
-	      // catching all exceptions
-	      System.out.println();
-	      System.out.println(e.toString());
-	    }
-	  }
 	private static void entityDeReferencing(File xmlFile) throws XPathExpressionException{
 		try{
 			
@@ -195,12 +157,13 @@ public class XMLValidator {
 		
 		if(actionValidate){
 			try {
-				if(xmlFile.isDirectory() && xsdFile != null && xsdFile.exists()){
+				if(xmlFile.isDirectory()){
 					findXMLFileAndValidate(xmlFile, xsdFile);
-				} else if(xmlFile.isFile() && xsdFile != null && xsdFile.exists()){
+				} else if(xmlFile.isFile()){
 					validateFile(xmlFile, xsdFile);
 				} else{
-					validateUsingschemaLocation(xmlFile);
+					//validateUsingschemaLocation(xmlFile);
+					System.out.println("Please provide a valid command line arguments to get better results.");
 				}
 			} catch (SAXException | IOException e) {
 				e.printStackTrace();
@@ -227,4 +190,5 @@ public class XMLValidator {
 		}
 		
 	}
+
 }
